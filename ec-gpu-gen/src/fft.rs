@@ -2,7 +2,6 @@ use std::cmp;
 use std::sync::{Arc, RwLock};
 
 use ec_gpu::GpuField;
-use ff::{Field, PrimeField};
 use log::{error, info};
 use rust_gpu_tools::{program_closures, Device, LocalBuffer, Program};
 
@@ -19,7 +18,7 @@ const MAX_LOG2_LOCAL_WORK_SIZE: u32 = 7; // 128
 /// FFT kernel for a single GPU.
 pub struct SingleFftKernel<'a, F>
 where
-    F: PrimeField + GpuField,
+    F: GpuField,
 {
     program: Program,
     /// An optional function which will be called at places where it is possible to abort the FFT
@@ -29,7 +28,7 @@ where
     _phantom: std::marker::PhantomData<F>,
 }
 
-impl<'a, F: PrimeField + GpuField> SingleFftKernel<'a, F> {
+impl<'a, F: GpuField> SingleFftKernel<'a, F> {
     /// Create a new kernel for a device.
     ///
     /// The `maybe_abort` function is called when it is possible to abort the computation, without
@@ -64,7 +63,9 @@ impl<'a, F: PrimeField + GpuField> SingleFftKernel<'a, F> {
             // [omega^(0/(2^(deg-1))), omega^(1/(2^(deg-1))), ..., omega^((2^(deg-1)-1)/(2^(deg-1)))]
             let mut pq = vec![F::zero(); 1 << max_deg >> 1];
             let twiddle = omega.pow_vartime([(n >> max_deg) as u64]);
-            pq[0] = Field::one();
+            // TODO vmx 2022-04-06: THIS IS LIKELY TO be in the wrrong form (montgomery vs.
+            // non-montgomery)
+            pq[0] = F::one();
             if max_deg > 1 {
                 pq[1] = twiddle;
                 for i in 2..(1 << max_deg >> 1) {
@@ -132,14 +133,14 @@ impl<'a, F: PrimeField + GpuField> SingleFftKernel<'a, F> {
 /// One FFT kernel for each GPU available.
 pub struct FftKernel<'a, F>
 where
-    F: PrimeField + GpuField,
+    F: GpuField,
 {
     kernels: Vec<SingleFftKernel<'a, F>>,
 }
 
 impl<'a, F> FftKernel<'a, F>
 where
-    F: PrimeField + GpuField,
+    F: GpuField,
 {
     /// Create new kernels, one for each given device.
     pub fn create(devices: &[&Device]) -> EcResult<Self> {
@@ -253,7 +254,7 @@ mod tests {
     use crate::fft_cpu::{parallel_fft, serial_fft};
     use crate::threadpool::Worker;
 
-    fn omega<F: PrimeField + GpuField>(num_coeffs: usize) -> F {
+    fn omega<F: GpuField>(num_coeffs: usize) -> F {
         // Compute omega, the 2^exp primitive root of unity
         let exp = (num_coeffs as f32).log2().floor() as u32;
         let mut omega = F::root_of_unity();

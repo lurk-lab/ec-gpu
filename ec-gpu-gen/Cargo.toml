@@ -26,6 +26,7 @@ yastl = "0.1.2"
 
 [dev-dependencies]
 blstrs = { version = "0.4.0", features = ["gpu"] }
+#blstrs = { path = "../../blstrs", features = ["gpu"] }
 rand = "0.8"
 lazy_static = "1.2"
 tempfile = "3.2.0"
@@ -34,6 +35,7 @@ rand_xorshift = "0.3.0"
 
 [build-dependencies]
 blstrs = "0.4.0"
+#blstrs = { path = "../../blstrs" }
 ec-gpu = "0.1.0"
 execute = "0.2.9"
 hex = "0.4"
