@@ -12,7 +12,7 @@ rust-version = "1.62.1"
 [dependencies]
 bitvec = "1.0.1"
 crossbeam-channel = "0.5.1"
-ec-gpu = "0.2.0"
+ec-gpu = { git="https://github.com/lurk-lab/ec-gpu.git", branch="dev" }
 execute = "0.2.9"
 ff = { version = "0.13.0", default-features = false }
 group = "0.13.0"
@@ -31,7 +31,7 @@ yastl = "0.1.2"
 # temporarily until https://github.com/zkcrypto/group/pull/29 is fixed. Then
 # we won't need the exports of `Fp` and `Fp2` any more.
 #blstrs = { version = "0.6.0", features = ["__private_bench"], optional = true }
-blstrs = { version = "0.7.0", features = ["__private_bench", "gpu"] }
+blstrs = { git = "https://github.com/lurk-lab/blstrs.git", branch = "dev", features = ["__private_bench", "gpu"] }
 rand = "0.8"
 lazy_static = "1.2"
 pairing = "0.23.0"

@@ -12,7 +12,7 @@ license = "MIT/Apache-2.0"
 publish = false
 
 [dev-dependencies]
-blstrs = { version = "0.7.0", features = ["__private_bench"] }
+blstrs = { git = "https://github.com/lurk-lab/blstrs.git", branch = "dev", features = ["__private_bench"] }
 criterion = "0.4"
 ec-gpu = "0.2"
 ec-gpu-gen = { path = "../ec-gpu-gen", default-features = false }
@@ -24,7 +24,7 @@ rand = "0.8"
 rayon = "1.5.3"
 
 [build-dependencies]
-blstrs = { version = "0.7.0", features = ["__private_bench"] }
+blstrs = { git = "https://github.com/lurk-lab/blstrs.git", branch = "dev", features = ["__private_bench"] }
 ec-gpu-gen = { path = "../ec-gpu-gen" }
 
 [features]
